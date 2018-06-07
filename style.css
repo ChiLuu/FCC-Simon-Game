@@ -1,6 +1,6 @@
 body {
   background: rgb(2,0,36);
-  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(50,182,209,1) 0%, rgba(255,255,255,1) 100%);
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(50,182,209,1) 0%,        rgba(255,255,255,1) 100%);
   
   font-family: 'Karla';
 }
@@ -21,7 +21,7 @@ body {
   -webkit-box-shadow: 11px 13px 18px 1px rgba(0,0,0,0.75);
   -moz-box-shadow: 11px 13px 18px 1px rgba(0,0,0,0.75);
   box-shadow: 11px 13px 18px 1px rgba(0,0,0,0.75);
-  border: 3px solid silver;
+  border: 4px solid silver;
 }
 .square:hover, .start:hover, .strict:hover, .switch-on, .switch-off, .reset, .continue {
   cursor: pointer;
@@ -70,19 +70,20 @@ body {
   margin: 0;
   text-align: center;
   -webkit-box-shadow: 8px 8px 18px 1px rgba(0,0,0,0.75);
--moz-box-shadow: 8px 8px 18px 1px rgba(0,0,0,0.75);
-box-shadow: 8px 8px 18px 1px rgba(0,0,0,0.75);
+  -moz-box-shadow: 8px 8px 18px 1px rgba(0,0,0,0.75);
+  box-shadow: 8px 8px 18px 1px rgba(0,0,0,0.75);
 
 }
 .start, .strict {
   display: inline-block;
-  border: 2px solid white;
+  border: 2px solid silver;
   margin-top: 25px;
   padding: 3px;
   border-radius: 2px;
-  color: #ff855b;
+  color: #fd632f;
   font-weight: bold;
   font-size: 0.75em;
+  background-color: white;
 }
 .level {
   position: relative;
@@ -139,18 +140,22 @@ box-shadow: 8px 8px 18px 1px rgba(0,0,0,0.75);
 .error {
   display: none;
   position: absolute;
-  top: 20px;
+  top: -25px;
   left: 50%;
-  width: 300px;
-  height: 60px;
-  margin-left: -150px;
-  background: #b20000;
-  border: 2px solid white;
-  line-height: 40px;
-  font-size: 1em;
+  width: 200px;
+  height: 200px;
+  margin-left: -100px;
+  line-height: 52px;
+  font-size: 1.5em;
   font-weight: bold;
-  padding: 10px;
+  padding: 15px;
   color: white;
+  background: #d76a03;
+  border: 4px solid silver;
+  border-radius: 20px;
+  -webkit-box-shadow: 11px 13px 18px 1px rgba(0,0,0,0.75);
+  -moz-box-shadow: 11px 13px 18px 1px rgba(0,0,0,0.75);
+  box-shadow: 11px 13px 18px 1px rgba(0,0,0,0.75);
 }
 
 .red-active {
@@ -190,26 +195,35 @@ box-shadow: 8px 8px 18px 1px rgba(0,0,0,0.75);
 .winner {
   display: none;
   position: absolute;
-  top: 20px;
+  top: 1px;
   left: 50%;
   width: 300px;
   height: 150px;
   margin-left: -150px;
   background: white;
-  border: 2px solid blueviolet;
+  border: 4px solid blueviolet;
+  border-radius: 10px;
   line-height: 40px;
-  font-size: 1em;
+  font-size: 1.1em;
   font-weight: bold;
   padding: 10px;
-  color: black;
+  color: #fd632f;
 }
 .reset, .continue {
-  width: 100px;
+  width: 120px;
   display: inline-block;
-  border: 2px solid grey;
+  border: 3px solid silver;
   padding: 3px;
-  border-radius: 2px;
-  color: red;
+  border-radius: 5px;
+  color: #fd632f;
   font-weight: bold;
-  font-size: 1em;
+  font-size: 1.2em;
+  -webkit-box-shadow: 8px 9px 11px -5px rgba(0,0,0,0.75);
+  -moz-box-shadow: 8px 9px 11px -5px rgba(0,0,0,0.75);
+  box-shadow: 8px 9px 11px -5px rgba(0,0,0,0.75);
+}
+.reset:hover, .continue:hover {
+  border: 3px solid red;
+  background: #fd632f;
+  color: white;
 }

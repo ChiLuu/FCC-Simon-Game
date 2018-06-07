@@ -15,9 +15,10 @@ let level = 0;                      // Level of current game, also the number of
 let inplay = false;                 // Session is in play for player's input or pause during replay of Simon's sequence.
 let strict = false;                 // Strict mode for when player wants a challenge. Any mistake will reset entire Simon's sequence and player has to start over from the beginning.
 let gameOn = true;                  // Game is active if true and inactive if false.
-let gamePlus = false;               // Allow player to continue after level 20.
-let winningLevel = 3;
-let errorMessage = ["Wrong! Let's try again.",          // Random error messages 
+let winningLevel = 20;              // Level number or Simon's sequence length that player need to reach before winning the game.
+let errorInterval;                  // For use in displaying error 
+let errorCount = 0;
+let errorMessage = ["Wrong! Let's try again.",          // Random error messages. 
                     "Wrong! Are you really trying?", 
                     "Wrong! Maybe you need a coffee?", 
                     "Wrong! What's the rush?", 
@@ -28,9 +29,9 @@ let errorMessage = ["Wrong! Let's try again.",          // Random error messages
                     "Wrong! Did you eat yet?",
                     "Wrong! Maybe you need a Snicker?",
                     "Wrong! But you're almost right!",
-                    "Wrong! Wrong! Wrong! Wrong!",
+                    "Wrong! Wrong! Wrong!",
                     "Wrong! Hello my wrong friend.",
-                    "Wrong! $#*@$^# &*$^@# Wrong!"];
+                    "Wrong! $#*@$^# Wrong!"];
 
 $(document).ready(function() {
   
@@ -47,8 +48,27 @@ $(document).ready(function() {
             // If player's sequence matches Simon's sequence, then add next simon's color.
             if(playerSequence[currentColor] == simonSequence[currentColor] && playerSequence.length == simonSequence.length) {
                 
-                if(level == winningLevel && !gamePlus) {
+                // If player reaches the winning level, play notification.
+                if(level == winningLevel) {
                     $(".winner").show("slide", {direction: "down"}, 1000);
+                    inplay = false;
+                    let lightsCount = 0;
+
+                    // Light up game board for winning display.
+                    let winningLights = setInterval(function() {
+                        lightUp(0);
+                        lightUp(1);
+                        lightUp(2);
+                        lightUp(3);
+                        lightsCount++
+
+                        if(lightsCount == 5) {
+                            clearInterval(winningLights);
+                            inplay = true;
+                        }
+                    }, 1100);
+
+                // If winning level has not been reached, then continue to next color in Simon sequence.
                 } else {
                     initiateSequence();
                     setTimeout(() => {
@@ -56,21 +76,54 @@ $(document).ready(function() {
                     }, 1000);
                 }
             }
+
+            // Notify play of game reset if strict mode is active and player made a mistake.
             else if(strict && playerSequence[currentColor] != simonSequence[currentColor]) {
                 simonSequence = [];
                 initiateSequence();
-                $(".error").html(errorMessage[randomColor(errorMessage.length)]);
                 $(".error").show();
+                $(".error").html("Strict Mode. Resetting Game.")
+
+                // Error message border flash.
+                errorInterval = setInterval(function()  {
+                    $(".error").css("border-color", "silver");
+                    $(".square").css("border-color", "red");
+                    setTimeout(() => {
+                        $(".error").css("border-color", "red");
+                        $(".square").css("border-color", "silver");
+                    }, 500);
+                    errorCount++;
+                    if(errorCount == 3) {
+                        clearInterval(errorInterval);
+                        errorCount = 0;
+                    }
+                }, 1100);
+
                 setTimeout(() => {
                     $(".error").hide();
                     startSimon();
-                }, 2500);
+                }, 5000);
             }
-            // Show error if player entered wrong color and then play Simon's sequence again.
+
+            // If player entered wrong color, Show error and then re-play Simon's sequence again.
             else if(playerSequence[currentColor] != simonSequence[currentColor]) {
                 
                 $(".error").html(errorMessage[randomColor(errorMessage.length)]);
                 $(".error").show();
+
+                // Error message border flash.
+                errorInterval = setInterval(function()  {
+                    errorCount++;
+                    $(".error").css("border-color", "red");
+                    setTimeout(() => {
+                        $(".error").css("border-color", "silver");
+                    }, 250);
+                    if(errorCount == 3) {
+                        clearInterval(errorInterval);
+                    }
+                }, 500);
+
+                errorCount = 0;
                 currentColor = 0;
                 playerSequence = [];
                 inplay = false;
@@ -138,31 +191,35 @@ $(document).ready(function() {
             simonSequence = [];  
             level = simonSequence.length;
             $(".level").html("00");
-            gamePlus = false;
         }
     });
 
     // Continue game from level 20 onwards.
     $(".continue").click(function() {
-        $(".winner").hide();
-        initiateSequence();
-        setTimeout(() => {
-            startSimon();
-        }, 1000);
-        gamePlus = true;
+        if(inplay) {
+            $(".winner").hide();
+            initiateSequence();
+            setTimeout(() => {
+                startSimon();
+            }, 1000);
+        }
     });
+
+    // Reset game after player reached level 20.
     $(".reset").click(function() {
-        $(".winner").hide();
-        clearInterval(simonInterval);
-        simonSequence = [];
-        initiateSequence();
-        setTimeout(() => {
-            startSimon();
-        }, 2500);
+        if(inplay) {
+            $(".winner").hide();
+            clearInterval(simonInterval);
+            simonSequence = [];
+            initiateSequence();
+            setTimeout(() => {
+                startSimon();
+            }, 1500);
+        }
     });
 });
 
-// Light up square and play sound according to it's color.
+/* Light up square and play sound according to it's color. */
 function lightUp(color) {
     console.log("color in lightUp: " + color);
     $("#" + color).addClass(colors[color]);
@@ -174,20 +231,18 @@ function lightUp(color) {
     }, 500);
 }
 
-/* Generate a random number from 0 - num */
+/* Generate a random number from 0 - num. */
 function randomColor(num) {
     return Math.floor(Math.random() * num);
 }
 
 
-/* Play throught each color in Simon's sequence */
+/* Play throught each color in Simon's sequence. */
 function startSimon() {
 
     simonInterval = setInterval(function() {
             
         simonColor = simonSequence[currentColor];
-        console.log("simonColor: " + simonColor);
-        console.log("currentColor: " + currentColor);
         lightUp(simonColor);
         currentColor++;
 
@@ -199,6 +254,7 @@ function startSimon() {
     }, 1000);
 }
 
+/* Initial setup before color, lights, and sound display of Simon's sequence. */
 function initiateSequence() {
     simonColor = randomColor(MAX_COLORS);
     simonSequence.push(simonColor);
